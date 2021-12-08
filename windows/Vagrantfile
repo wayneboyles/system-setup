@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Box name
+  config.vm.box = "gusztavvargadr/windows-11-enterprise"
+
+  # Bridge to my External V-Switch in Hyper-V.  This allows the machine
+  # to come up on an IP on my local / development network
+  config.vm.network "public_network", bridge: "External Switch"
+
+  # Configure Hyper-V
+  config.vm.provider "hyperv" do |hpv|
+    hpv.memory = "4096"
+    hpv.cpus = "4"
+    hpv.enable_checkpoints = true
+    hpv.enable_automatic_checkpoints = false
+    hpv.enable_enhanced_session_mode = true
+    hpv.vmname = "Windows11"
+    hpv.vm_integration_services = {
+      guest_service_interface: true,
+      heartbeat: true,
+      key_value_pair_exchange: true,
+      shutdown: true,
+      time_synchronization: true,
+      vss: true
+    }
+  end
+  
+  config.vm.provision "shell", path: "configure.ps1", privileged: true
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   apt-get update
+  #   apt-get install -y apache2
+  # SHELL
+end
