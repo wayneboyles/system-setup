@@ -5,4 +5,4 @@ ToDo
 
 # Linux
 
-`wget https://raw.githubusercontent.com/wayneboyles/system-setup/main/linux/configure.sh | sh -`
+`wget https://raw.githubusercontent.com/wayneboyles/system-setup/main/linux/configure.sh -O - | sh`

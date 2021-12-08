@@ -2,7 +2,7 @@
 
 # List of packages to install by default
 # TODO: support multiple distribution package names
-COMMON_PKGS=(vim-nox wget curl tree git net-tools chrony)
+COMMON_PKGS=("vim-nox" "wget" "curl" "tree" "git" "net-tools" "chrony")
 
 function updateSystem() {
     # TODO: support multiple package managers
