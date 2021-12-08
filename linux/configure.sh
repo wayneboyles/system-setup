@@ -2,7 +2,7 @@
 
 # List of packages to install by default
 # TODO: support multiple distribution package names
-COMMON_PKGS=("vim-nox" "wget" "curl" "tree" "git" "net-tools" "chrony")
+COMMON_PKGS=(vim-nox wget curl tree git net-tools chrony)
 
 function updateSystem() {
     # TODO: support multiple package managers
@@ -27,7 +27,7 @@ SCRIPT_DIR=$(pwd)
 updateSystem
 
 # install common packages
-installPackages $COMMON_PKGS[@]
+installPackages ${COMMON_PKGS[@]}
 
 # install fonts
 cd /tmp
@@ -36,6 +36,7 @@ cd /tmp/fonts
 ./install.sh
 cd /tmp
 rm -rf /tmp/fonts
+cd $SCRIPT_DIR
 
 # install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
