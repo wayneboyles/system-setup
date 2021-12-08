@@ -41,7 +41,14 @@ rm -rf /tmp/fonts
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # install custom vim settings
-cp $SCRIPT_DIR/.vimrc ~/.vimrc
+curl -fLo ~/.vimrc https://raw.githubusercontent.com/wayneboyles/system-setup/main/linux/.vimrc
 
 # install the vim plugins
 vim -E -s -u ~/.vimrc +PlugInstall +qall
+
+# enable chrony
+systemctl enable chrony
+systemctl restart chrony
+
+# done
+echo "Done"
