@@ -137,7 +137,7 @@ function installZsh() {
 
   logInfo "Downloading customized .zshrc file..."
   wget -q https://raw.githubusercontent.com/wayneboyles/system-setup/main/linux/.zshrc
-  mv .zshrc ~/.zshrc
+  mv .zshrc ~/.zshrc > /dev/null 2>&1
 }
 
 # ===================================================
@@ -186,17 +186,17 @@ fi
 printHeader
 
 # run a system update
-#updateSystem
+updateSystem
 
 # install common packages
-#installPackages ${COMMON_PKGS[@]}
+installPackages ${COMMON_PKGS[@]}
 
 # install fonts
-#installPowerlineFonts
+installPowerlineFonts
 
 # install vim-plug and custom .vimrc
-#installVimPlug
-#installVimConfig
+installVimPlug
+installVimConfig
 
 echo ''
 while true; do
@@ -212,4 +212,7 @@ systemctl enable chrony > /dev/null 2>&1
 systemctl restart chrony > /dev/null 2>&1
 
 # done
-echo "Done"
+echo -e "${CYAN}Configuration finished!  Please log out and back in for some of the changes to apply.${NC}"
+echo ''
+
+exit 0
