@@ -7,7 +7,7 @@ configure:
   
   packages: wget curl sudo tree htop vim-nox git
   
-  host:
+  system:
     timezone: America/Chicago
     ntp_servers:
       - 0.us.pool.ntp.org
