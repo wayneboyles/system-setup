@@ -7,3 +7,5 @@ cd /tmp && git clone https://github.com/powerline/fonts.git --depth=1 -q > /dev/
 /tmp/fonts/install.sh > /dev/null 2>&1
 
 rm -rf /tmp/fonts
+
+cd $SCRIPT_DIR

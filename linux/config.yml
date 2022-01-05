@@ -5,9 +5,10 @@ configure:
   update: yes
   reboot: yes
   
-  packages: wget curl sudo tree htop vim-nox git
+  packages: wget curl sudo tree htop vim-nox git lnav
   
   system:
+    root_login: yes
     timezone: America/Chicago
     ntp_servers:
       - 0.us.pool.ntp.org

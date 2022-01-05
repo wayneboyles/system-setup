@@ -37,3 +37,5 @@ alias ldot='ls -ld .* --color'  # list dot files as long list
 alias lS='ls -1FSsh --color'    # list files showing only size and name sorted by size
 alias lart='ls -1Fcart --color' # list all files sorted in reverse of create/modification time (oldest first)
 alias lrt='ls -1Fcrt --color'   # list files sorted in reverse of create/modification time(oldest first)
+
+neofetch

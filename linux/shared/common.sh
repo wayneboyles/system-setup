@@ -25,11 +25,29 @@ WHITE='\033[1;37m'
 # Variables
 # ===================================================
 
+YAML_FILE=''
+SILENT=$false
+VERBOSE=$false
 
+DISTRO=''
+DISTRO_VERSION=''
+DISTRO_CODENAME=''
 
 # ===================================================
 # Functions
 # ===================================================
+
+function get_args() {
+   while [[ "$1" ]]; do
+      case $1 in
+         "--config")             YAML_FILE="$2" ;;
+         "--silent")             SILENT=$true ;;
+         "--verbose")            VERBOSE=$true ;;
+      esac
+
+      shift
+   done
+}
 
 function parse_yaml {
    local prefix=$2

@@ -4,8 +4,8 @@
 # Imports
 # ===================================================
 
-. utils/common.sh
-. utils/environment.sh
+. shared/common.sh
+. shared/environment.sh
 
 # ===================================================
 # Variables
@@ -18,16 +18,16 @@ SCRIPT_DIR="$(pwd)"
 # ===================================================
 
 function printHeader() {
-    clear
+    #clear
     echo -e "${ORANGE}=======================================${NC}"
     echo -e "${GREEN}Linux Setup Script${NC}"
-    echo -e "${WHITE}A simple script to help automate common${NC}"
-    echo -e "${WHITE}system setup tasks${NC}"
+    echo -e "${LIGHTGRAY}A simple script to help automate common${NC}"
+    echo -e "${LIGHTGRAY}system setup tasks${NC}"
     echo -e "${ORANGE}=======================================${NC}"
     echo ''
-    echo -e "${WHITE}Please note, the configurations here are based on my personal preference"
-    echo -e "${WHITE}and may not suite your requirements.  Please review the config.yml file"
-    echo -e "${WHITE}for all possible configuration values.${NC}"
+    echo -e "${LIGHTGRAY}Please note, the configurations here are based on my personal preference"
+    echo -e "${LIGHTGRAY}and may not suite your requirements.  Please review the config.yml file"
+    echo -e "${LIGHTGRAY}for all possible configuration values.${NC}"
     echo ''
 }
 
@@ -39,6 +39,8 @@ cache_uname
 get_os
 get_distro
 
+get_args "$@"
+
 printHeader
 
 if [[ $distro == *'Unknown'* ]]
@@ -47,9 +49,15 @@ then
     exit 1
 fi
 
-echo -e "${WHITE}OS:          ${GREEN}$DISTRIB${NC}"
-echo -e "${WHITE}OS Version:  ${GREEN}$OS_VERSION${NC}"
-echo -e "${WHITE}Codename:    ${GREEN}$OS_CODENAME${NC}"
+# did we pass in the --config parameter?
+if [[ -z "$YAML_FILE" ]]; then
+  YAML_FILE=./config.yml
+fi
+
+echo -e "${LIGHTGRAY}OS:          ${GREEN}$DISTRO${NC}"
+echo -e "${LIGHTGRAY}OS Version:  ${GREEN}$DISTRO_VERSION${NC}"
+echo -e "${LIGHTGRAY}Codename:    ${GREEN}$DISTRO_CODENAME${NC}"
+echo -e "${LIGHTGRAY}Config File: ${GREEN}$YAML_FILE${NC}"
 echo ''
 
 while true; do
@@ -60,8 +68,16 @@ while true; do
   esac
 done
 
-# TODO: Check if config file exists
-eval $(parse_yaml config.yml)
+# does the configuration file exist
+if [[ -f "$YAML_FILE" ]]; then
+  eval $(parse_yaml $YAML_FILE)
+else
+  logError "Unable to find config file '$YAML_FILE'.  Unable to continue."
+  exit 1
+fi
+
+# Configure SSH
+. components/ssh.sh
 
 # Set the timezone
 . components/timezone.sh
@@ -80,3 +96,6 @@ eval $(parse_yaml config.yml)
 
 # Configure VIM
 . components/vim.sh
+
+# Finish
+shutdown -r now
