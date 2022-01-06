@@ -2,14 +2,27 @@
 
 configure:
 
+  # if or not to perform system updates
   update: yes
+
+  # if or not to reboot once configuration is
+  # complete
   reboot: yes
   
-  packages: wget curl sudo tree htop vim-nox git lnav
+  # the list of packages to install
+  packages: wget curl sudo tree htop vim-nox git lnav git
   
+  # system configuration
   system:
-    root_login: yes
+
+    # if or not to permit root login via SSH. On some systems such as
+    # Debian, this is disabled by default
+    permit_root_login: yes
+
+    # the timezone of the server
     timezone: America/Chicago
+
+    # NTP servers to use for time synchronization
     ntp_servers:
       - 0.us.pool.ntp.org
       - 1.us.pool.ntp.org
