@@ -1,0 +1,184 @@
+#cloud-config
+autoinstall:
+  version: 1
+  user-data:
+    disable_root: false
+  identity:
+    hostname: ubuntu-server
+    password: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
+    username: root
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+    ethernets:
+      eth0:
+        dhcp4: true
+    version: 2
+  ssh:
+    allow-pw: true
+    install-server: true
+  packages:
+    - wget
+    - curl
+    - git
+    - tree
+    - lnav
+    - tree
+    - vim-nox
+  storage:
+    swap:
+      swap: 0
+    config:
+      # Physical Disk
+      - type: disk
+        id: disk-sda
+        path: /dev/sda
+        preserve: false
+        grub_device: false
+        ptable: gpt
+        wipe: superblock-recursive
+        match:
+          size: largest
+
+      # EFI Boot Partition
+      - type: partition
+        id: partition-10
+        size: 512M
+        number: 1
+        device: disk-sda
+        wipe: superblock
+        flag: boot
+        preserve: false
+        grub_device: true
+      
+      # Format EFI Boot Partition
+      - type: format
+        id: format-13
+        volume: partition-10
+        preserve: false
+        fstype: fat32
+
+      # Boot Partition
+      - type: partition
+        id: partition-11
+        size: 512M
+        number: 2
+        device: disk-sda
+        wipe: superblock
+        flag: ""
+        preserve: false
+        grub_device: false
+      
+      # Format Boot Partition
+      - type: format
+        id: format-14
+        volume: partition-11
+        preserve: false
+        fstype: ext4
+
+      # LVM Partition Rest of Disk
+      - type: partition
+        id: partition-12
+        size: -1
+        number: 3
+        device: disk-sda
+        wipe: superblock
+        flag: ""
+        preserve: false
+        grub_device: false
+
+      # LVM Group
+      - type: lvm_volgroup
+        id: lvm-volgroup-1
+        preserve: false
+        name: ubuntu-vg
+        devices:
+          - partition-12
+
+      # SWAP LV
+      - type: lvm_partition
+        id: lvm-partition-1
+        size: 2G
+        volgroup: lvm-volgroup-1
+        wipe: superblock
+        preserve: false
+        name: lv-swap
+      
+      # Format SWAP LV
+      - type: format
+        id: format-15
+        preserve: false
+        volume: lvm-partition-1
+        fstype: swap
+
+      # Mount Swap Volume
+      - type: mount
+        id: mount-13
+        device: format-15
+        path: ''
+
+      # Logs LV
+      - type: lvm_partition
+        id: lvm-partition-2
+        size: 4G
+        volgroup: lvm-volgroup-1
+        wipe: superblock
+        preserve: false
+        name: lv-logs
+
+      # Format Logs Partition
+      - type: format
+        id: format-16
+        volume: lvm-partition-2
+        preserve: false
+        fstype: ext4
+      
+      # Root LV
+      - type: lvm_partition
+        id: lvm-partition-3
+        size: -1
+        volgroup: lvm-volgroup-1
+        wipe: superblock
+        preserve: false
+        name: lv-root
+
+      # Format Root Volume
+      - type: format
+        id: format-17
+        volume: lvm-partition-3
+        preserve: false
+        fstype: ext4      
+
+      # Mount Root Volume
+      - type: mount
+        id: mount-15
+        device: format-17
+        path: / 
+
+      # Mount Boot Volume
+      - type: mount
+        id: mount-12
+        device: format-14
+        path: /boot
+
+      # Mount Logs Volume
+      - type: mount
+        id: mount-14
+        device: format-16
+        path: /var/logs
+
+      # Mount EFI Boot Volume
+      - type: mount
+        id: mount-11
+        device: format-13
+        path: /boot/efi
+
+  late-commands:
+    - curtin in-target --target=/target -- timedatectl set-timezone America/Chicago
+    - curtin in-target --target=/target -- sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    - curtin in-target --target=/target -- systemctl restart sshd
+    - curtin in-target --target=/target -- apt update
+    - curtin in-target --target=/target -- apt upgrade -y
